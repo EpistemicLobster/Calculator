@@ -12,12 +12,35 @@ const six = document.querySelector('.six')
 const seven = document.querySelector('.seven')
 const eight = document.querySelector('.eight')
 const nine = document.querySelector('.nine')
+
+const decimal = document.querySelector('.decimal');
+
 const ac = document.querySelector('.ac')
 
-console.log(output.textContent.length);
+const opSubtract = document.querySelector('.subtract')
+const opAdd = document.querySelector('.add')
+const opMultiply = document.querySelector('.multiply')
+const opDivide = document.querySelector('.divide')
+const equal = document.querySelector('.equal')
+// const numbers = document.querySelectorAll('.number')
 
+
+//set inital variable values for functions
+
+let inputState = true;
+
+let operatorState = false;
+
+let clearDigit = false;
+
+let register = '';
+
+let result = 0;
+
+//Add event listeners to integer keys
 zero.addEventListener('click', () => {
-    if (output.textContent == '0' || output.textContent == '') {
+    if (outputMax()) {
+    zeroCheck();
     output.textContent = '0';
     } else {output.textContent += '0';}
 })
@@ -68,8 +91,19 @@ nine.addEventListener('click', () => {
         zeroCheck();
         output.textContent += '9'}
     });
-ac.addEventListener('click', () => output.textContent = '0');
 
+decimal.addEventListener('click', () => {
+    if(outputMax() && output.textContent.endsWith('.') == false) {
+        zeroCheck();
+        output.textContent += '.'}
+})
+
+ac.addEventListener('click', () => {
+    output.textContent = '0';
+    register = '';
+});
+
+//number population parameter funcitons
 function preventZeros() {
     if (output.textContent == '0' || output.textContent == '') {
         output.textContent = '0';
@@ -84,60 +118,107 @@ function outputMax() {
     }
 }
 
+
+
 function zeroCheck() {
-    if(output.textContent == '0') {
-        output.textContent = ''
+    if(output.textContent == '0'|| clearDigit) {
+        output.textContent = '';
+        clearDigit = false;
     }
 }
 
-console.log(outputMax())
 
 
-/* Attempt to add event listeners and corresponding outputs to buttons via loop*/
-// let numbers = (document.querySelectorAll('.number'));
-// console.log(numbers[0])
-// console.log(numbers);
-// let i = 0;
-// for(let i = 0; i <= numbers.length; i++) {
-//     numbers[i].addEventListener('click', () => output.textContent = ('goodbye'));
-// }
-
-// output.textContent = "hello";
-
-
-
-
-
-
-
-
-//Basic Calculator Functions Below
-
-function operate (a, b, operator) {
-    let ans = operator(a,b); 
+function printResult() {
+    output.textContent = result;
+    clearDigit = 'true';
+    register = result;
 }
 
+//add event listeners to operator keys
+
+opDivide.addEventListener('click', () => {
+    if(register !== '') {
+        operate()
+    } else {
+    register = +(output.textContent);
+    clearDigit = true;
+    operatorState = 'divide';
+    }
+})
+
+opMultiply.addEventListener('click', () => {
+    if(register !== '') {
+        operate()
+    } else {
+    register = +(output.textContent);
+    clearDigit = true;
+    operatorState = 'multiply';
+    }
+})
+
+opSubtract.addEventListener('click', () => {
+    if(register !== '') {
+        operate()
+    } else {
+    register = +(output.textContent);
+    clearDigit = true;
+    operatorState = 'subtract';
+    }
+})
+
+opAdd.addEventListener('click', () => {
+    if(register !== '') {
+        operate()
+    } else {
+    register = +(output.textContent);
+    clearDigit = true;
+    operatorState = 'add';
+    }
+})
+
+equal.addEventListener('click', () => operate());
+
+function operate () {
+    if(operatorState == 'divide') {
+        if (output.textContent == '0') {
+            result = "Nope!"
+            printResult();
+        } else {
+            result = divide(register, +(output.textContent));
+            printResult();
+        }
+
+    } else if(operatorState == 'multiply') {
+        result = multiply(register, +(output.textContent));
+        printResult();
+    } else if(operatorState == 'subtract') {
+        result = subtract(register, +(output.textContent));
+        printResult();
+    } else if(operatorState == 'add') {
+        result = add(register, +(output.textContent));
+        printResult();
+    }
+}
+
+//Basic Calculator Functions Below
 function add (a,b) {
     // return a + b;
-    console.log(+(a+b).toFixed(2))
+    return (+(a+b).toFixed(2))
 }
 
 function subtract (a,b) {
     // return a - b;
-    console.log(a-b.toFixed(2))
+    return (a-b.toFixed(2))
 }
 
 
 function multiply (a,b) {
     // return a * b;
-    console.log(a*b.toFixed(2))
+    return (a*b.toFixed(2))
 }
 
 function divide (a,b) {
-    if(b ===0) {
-        console.log('You wish!')
-    }
     // return a/b;
-    console.log((a/b).toFixed(2))
-}
-
+        return ((a/b).toFixed(2));
+    }
