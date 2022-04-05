@@ -1,6 +1,5 @@
 const output = document.querySelector('#output')
 
-
 //Variable linkage to DOM elements
 const zero = document.querySelector('.zero')
 const one = document.querySelector('.one')
@@ -15,6 +14,8 @@ const nine = document.querySelector('.nine')
 
 const decimal = document.querySelector('.decimal');
 
+const negate = document.querySelector('.negate')
+const percent = document.querySelector('.percent')
 const ac = document.querySelector('.ac')
 
 const opSubtract = document.querySelector('.subtract')
@@ -26,7 +27,6 @@ const equal = document.querySelector('.equal')
 
 
 //set inital variable values for functions
-
 let inputState = true;
 
 let operatorState = false;
@@ -41,8 +41,7 @@ let result = 0;
 zero.addEventListener('click', () => {
     if (outputMax()) {
     zeroCheck();
-    output.textContent = '0';
-    } else {output.textContent += '0';}
+    output.textContent += '0';}
 })
 one.addEventListener('click', () => {
     if(outputMax()) {
@@ -94,8 +93,21 @@ nine.addEventListener('click', () => {
 
 decimal.addEventListener('click', () => {
     if(outputMax() && output.textContent.endsWith('.') == false) {
-        zeroCheck();
         output.textContent += '.'}
+})
+
+negate.addEventListener('click', () => {
+    output.textContent = -(output.textContent);
+})
+
+percent.addEventListener('click', () => {
+    if (register !== '') {
+    output.textContent = ((+(output.textContent) / 100) * register);
+    operate();
+    } else {
+    result = `${+(output.textContent) / 100}`;
+    printResult();
+    }
 })
 
 ac.addEventListener('click', () => {
@@ -104,8 +116,9 @@ ac.addEventListener('click', () => {
 });
 
 //number population parameter funcitons
+
 function preventZeros() {
-    if (output.textContent == '0' || output.textContent == '') {
+    if (output.textContent == '0') {
         output.textContent = '0';
         } else {output.textContent += '0';}
 }
@@ -118,8 +131,6 @@ function outputMax() {
     }
 }
 
-
-
 function zeroCheck() {
     if(output.textContent == '0'|| clearDigit) {
         output.textContent = '';
@@ -127,11 +138,9 @@ function zeroCheck() {
     }
 }
 
-
-
 function printResult() {
     output.textContent = result;
-    clearDigit = 'true';
+    clearDigit = true;
     register = result;
 }
 
@@ -140,6 +149,7 @@ function printResult() {
 opDivide.addEventListener('click', () => {
     if(register !== '') {
         operate()
+        operatorState = 'divide';
     } else {
     register = +(output.textContent);
     clearDigit = true;
@@ -150,6 +160,7 @@ opDivide.addEventListener('click', () => {
 opMultiply.addEventListener('click', () => {
     if(register !== '') {
         operate()
+        operatorState = 'multiply';
     } else {
     register = +(output.textContent);
     clearDigit = true;
@@ -160,6 +171,7 @@ opMultiply.addEventListener('click', () => {
 opSubtract.addEventListener('click', () => {
     if(register !== '') {
         operate()
+        operatorState = 'subtract';
     } else {
     register = +(output.textContent);
     clearDigit = true;
@@ -170,6 +182,7 @@ opSubtract.addEventListener('click', () => {
 opAdd.addEventListener('click', () => {
     if(register !== '') {
         operate()
+        operatorState = 'add';
     } else {
     register = +(output.textContent);
     clearDigit = true;
@@ -177,11 +190,18 @@ opAdd.addEventListener('click', () => {
     }
 })
 
-equal.addEventListener('click', () => operate());
+equal.addEventListener('click', () => {
+    operate();
+    register = '';
 
-function operate () {
+});
+
+function operate() {
+    if(register == '' && output.textContent == 0) {
+        return
+    } 
     if(operatorState == 'divide') {
-        if (output.textContent == '0') {
+        if (output.textContent == 0) {
             result = "Nope!"
             printResult();
         } else {
@@ -220,5 +240,7 @@ function multiply (a,b) {
 
 function divide (a,b) {
     // return a/b;
-        return ((a/b).toFixed(2));
+        return +((a/b).toFixed(2));
     }
+
+//Add Keyboard Support Below

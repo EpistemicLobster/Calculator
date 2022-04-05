@@ -1,6 +1,7 @@
 #calculator-container {
     display: flex;
     justify-content: center;
+    align-items: center;
     height: 100vh;
     width: 100vw;
 }
@@ -64,13 +65,22 @@
     margin: 0.1%;;
     width: 35.5%;
     height: 97%;
-    font-size: 25px;;
 }
 
 .zero{
     width: 74%;
 }
 
-.key {
+.number{
+    font-size: 25px; 
+}
+
+.special{
     font-size: 25px;
+    background-color: orange;
+}
+
+.operator{
+    font-size: 25px;
+    background-color: rgb(64, 150, 236);
 }
