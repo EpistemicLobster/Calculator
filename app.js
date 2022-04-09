@@ -1,6 +1,10 @@
+/*----------------------------------
+|      Variable Linkage to DOM      |
+-----------------------------------*/
 const output = document.querySelector('#output')
+const gridContainer = document.querySelector('#numbers');
 
-//Variable linkage to DOM elements
+const decimal = document.querySelector('.decimal')
 const zero = document.querySelector('.zero')
 const one = document.querySelector('.one')
 const two = document.querySelector('.two')
@@ -12,115 +16,76 @@ const seven = document.querySelector('.seven')
 const eight = document.querySelector('.eight')
 const nine = document.querySelector('.nine')
 
-const decimal = document.querySelector('.decimal');
-
-const negate = document.querySelector('.negate')
 const percent = document.querySelector('.percent')
+const negate = document.querySelector('.negate')
 const ac = document.querySelector('.ac')
 
-const opSubtract = document.querySelector('.subtract')
-const opAdd = document.querySelector('.add')
-const opMultiply = document.querySelector('.multiply')
-const opDivide = document.querySelector('.divide')
 const equal = document.querySelector('.equal')
-// const numbers = document.querySelectorAll('.number')
+const divided = document.querySelector('.divide')
+const times = document.querySelector('.multiply')
+const minus = document.querySelector('.subtract')
+const plus = document.querySelector('.add')
 
-
-//set inital variable values for functions
-let inputState = true;
-
-let operatorState = false;
-
-let clearDigit = false;
-
+/*----------------------------------
+|       Set Initial Variables       |
+-----------------------------------*/
+buttonArray = ['0','1','2','3','4','5','6','7','8','9','.']
 let register = '';
+let ans = '';
+let clearOutput = false;
+let operatorState = '';
+let operatorNumber = '';
+let primed = false;
 
-let result = 0;
 
-//Add event listeners to integer keys
-zero.addEventListener('click', () => {
-    if (outputMax()) {
-    zeroCheck();
-    output.textContent += '0';}
-})
-one.addEventListener('click', () => {
-    if(outputMax()) {
-    zeroCheck();
-    output.textContent += '1';
-    }
-})
-two.addEventListener('click', () => {
-    if(outputMax()){
-    zeroCheck();
-    output.textContent += '2'
-    }
-});
-three.addEventListener('click', () => {
-    if(outputMax()) {
-        zeroCheck();
-        output.textContent += '3'}
-    });
-four.addEventListener('click', () => {
-    if(outputMax()) {
-        zeroCheck();
-        output.textContent += '4'}
-    });
-five.addEventListener('click', () => {
-    if(outputMax()) {
-        zeroCheck();
-        output.textContent += '5'}
-    });
-six.addEventListener('click', () => {
-    if(outputMax()) {
-        zeroCheck();
-        output.textContent += '6'}
-    });
-seven.addEventListener('click', () => {
-    if(outputMax()) {
-        zeroCheck();
-        output.textContent += '7'}
-    });
-eight.addEventListener('click', () => {
-    if(outputMax()) {
-        zeroCheck();
-        output.textContent += '8'}
-    });
-nine.addEventListener('click', () => {
-    if(outputMax()) {
-        zeroCheck();
-        output.textContent += '9'}
-    });
-
+/*----------------------------------
+|           Number Keys             |
+-----------------------------------*/
+zero.addEventListener('click', () => outputKey(0));
+one.addEventListener('click', () => outputKey(1));
+two.addEventListener('click', () => outputKey(2));
+three.addEventListener('click', () => outputKey(3));
+four.addEventListener('click', () => outputKey(4));
+five.addEventListener('click', () => outputKey(5));
+six.addEventListener('click', () => outputKey(6));
+seven.addEventListener('click', () => outputKey(7));
+eight.addEventListener('click', () => outputKey(8));
+nine.addEventListener('click', () => outputKey(9));
 decimal.addEventListener('click', () => {
-    if(outputMax() && output.textContent.endsWith('.') == false) {
-        output.textContent += '.'}
+    if(output.textContent.includes('.')) {
+        return
+    } else
+        outputKey(10);
 })
 
+/*----------------------------------
+|           Special Keys            |
+-----------------------------------*/
 negate.addEventListener('click', () => {
     output.textContent = -(output.textContent);
 })
-
-percent.addEventListener('click', () => {
-    if (register !== '') {
-    output.textContent = ((+(output.textContent) / 100) * register);
-    operate();
-    } else {
-    result = `${+(output.textContent) / 100}`;
-    printResult();
-    }
+percent.addEventListener('click', () => percentOperation())
+ac.addEventListener('click', () => {
+    clearOutput = false;
+    register = '';
+    output.textContent = 0;
 })
 
-ac.addEventListener('click', () => {
-    output.textContent = '0';
-    register = '';
-});
+divided.addEventListener('click', () => primeOperation(0))
+times.addEventListener('click', () => primeOperation(1))
+minus.addEventListener('click', () => primeOperation(2))
+plus.addEventListener('click', () => primeOperation(3))
+equal.addEventListener('click', () => operate())
 
-//number population parameter funcitons
+/*----------------------------------
+|           Core Functions          |
+-----------------------------------*/
 
-function preventZeros() {
-    if (output.textContent == '0') {
-        output.textContent = '0';
-        } else {output.textContent += '0';}
+function outputKey(num) {
+    if(outputMax()) {
+    zeroCheck();
+    output.textContent += buttonArray[num];
+    }
 }
 
 function outputMax() {
@@ -132,115 +97,87 @@ function outputMax() {
 }
 
 function zeroCheck() {
-    if(output.textContent == '0'|| clearDigit) {
+    if(output.textContent == '0' || clearOutput) {
         output.textContent = '';
-        clearDigit = false;
+        clearOutput = false;
     }
 }
 
-function printResult() {
-    output.textContent = result;
-    clearDigit = true;
-    register = result;
-}
-
-//add event listeners to operator keys
-
-opDivide.addEventListener('click', () => {
-    if(register !== '') {
-        operate()
-        operatorState = 'divide';
+function primeOperation(num) {
+    operatorNumber = num;
+    clearOutput = true;
+    if(register == '') {
+    operatorState = operatorNumber;
+    register = output.textContent;
     } else {
-    register = +(output.textContent);
-    clearDigit = true;
-    operatorState = 'divide';
-    }
-})
-
-opMultiply.addEventListener('click', () => {
-    if(register !== '') {
-        operate()
-        operatorState = 'multiply';
-    } else {
-    register = +(output.textContent);
-    clearDigit = true;
-    operatorState = 'multiply';
-    }
-})
-
-opSubtract.addEventListener('click', () => {
-    if(register !== '') {
-        operate()
-        operatorState = 'subtract';
-    } else {
-    register = +(output.textContent);
-    clearDigit = true;
-    operatorState = 'subtract';
-    }
-})
-
-opAdd.addEventListener('click', () => {
-    if(register !== '') {
-        operate()
-        operatorState = 'add';
-    } else {
-    register = +(output.textContent);
-    clearDigit = true;
-    operatorState = 'add';
-    }
-})
-
-equal.addEventListener('click', () => {
     operate();
-    register = '';
+    register = output.textContent;
+    operatorState = operatorNumber;
+    }
+}
 
-});
+function fixLongOutput() {
+    if(ans.toString().length > 5) {
+        return ans.toPrecision(4);
+    } else {
+        return ans;
+    }
+}
+
+function percentOperation() {
+    if (register !== '') {
+        output.textContent = ((+output.textContent) / 100) * register;
+        operate();
+    } else {
+        output.textContent = `${+(output.textContent) / 100}`
+    }
+}
+/*----------------------------------
+|    Basic Calculator Operations    |
+-----------------------------------*/
 
 function operate() {
-    if(register == '' && output.textContent == 0) {
-        return
-    } 
-    if(operatorState == 'divide') {
-        if (output.textContent == 0) {
-            result = "Nope!"
-            printResult();
-        } else {
-            result = divide(register, +(output.textContent));
-            printResult();
-        }
-
-    } else if(operatorState == 'multiply') {
-        result = multiply(register, +(output.textContent));
-        printResult();
-    } else if(operatorState == 'subtract') {
-        result = subtract(register, +(output.textContent));
-        printResult();
-    } else if(operatorState == 'add') {
-        result = add(register, +(output.textContent));
-        printResult();
+    console.log(operatorState)
+    switch(operatorState) {
+        case 0:
+            divide(+register, +output.textContent);
+            ans = fixLongOutput();
+            output.textContent = ans;
+            break;
+        case 1:
+            multiply(+register, +output.textContent);
+            console.log(ans);
+            ans = fixLongOutput();
+            output.textContent = ans;
+            break;
+        case 2:
+            subtract(+register, +output.textContent);
+            ans = fixLongOutput();
+            output.textContent = ans;
+            break;
+        case 3: 
+            add(+register, +output.textContent);
+            ans = fixLongOutput();
+            output.textContent = ans;
+            break;
     }
-}
-
-//Basic Calculator Functions Below
-function add (a,b) {
-    // return a + b;
-    return (+(a+b).toFixed(2))
-}
-
-function subtract (a,b) {
-    // return a - b;
-    return (a-b.toFixed(2))
-}
-
-
-function multiply (a,b) {
-    // return a * b;
-    return (a*b.toFixed(2))
 }
 
 function divide (a,b) {
-    // return a/b;
-        return +((a/b).toFixed(2));
+    if(b === 0) {
+        console.log('You wish!');
     }
+    ans =  +(a/b).toFixed(3);
+}
 
-//Add Keyboard Support Below
+function multiply (a,b) {
+    ans = +(a*b).toFixed(3);
+}
+
+function subtract (a,b) {
+    ans = +(a-b).toFixed(3);
+}
+
+function add (a,b) {
+    ans = +(+a + +b).toFixed(3);
+}
